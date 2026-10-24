@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><script>/* private preview: own localStorage namespace (origin is shared with live) */(function(){try{var L=window.localStorage,P='ssp:',S=Storage.prototype,g=S.getItem,s=S.setItem,r=S.removeItem;S.getItem=function(k){return g.call(this,this===L?P+k:k)};S.setItem=function(k,v){return s.call(this,this===L?P+k:k,v)};S.removeItem=function(k){return r.call(this,this===L?P+k:k)}}catch(e){}})();(function(){var q=location.search,add=[],has=function(n){return new RegExp('[?&]'+n+'=').test(q)};if(!/[?&]clean=1\b/.test(q))window.__SS_LABEL='private preview A38';[['loco','2'],['repos','1'],['hits','2'],['fx','3'],['sp','5']].forEach(function(a){if(!has(a[0]))add.push(a[0]+'='+a[1])});if(!/[?&]normal=1\b/.test(q)){if(!has('door'))add.push('door=1');if(!has('cxnade'))add.push('cxnade=1')}if(!has('q')&&!has('start'))add.push('start=high');if(add.length)location.replace(location.pathname+(q?q+'&':'?')+add.join('&')+location.hash)})();</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>Sandstorm</title>
+  <link rel="stylesheet" href="style.db42e27c0f.css">
+<link rel="icon" href="data:,">
+</head>
+<body>
+  <div id="starting">Starting…</div>
+  <div id="rotate">Rotate to landscape</div>
+  <div id="start">
+    <h1>Sandstorm</h1>
+    <button id="play" type="button">Play</button>
+    <button id="quality" type="button" class="quality-btn">Quality</button>
+    <script>/* A10: label from ?q / saved tier before first paint (was a 'High' flash); main.js relabels once loaded */(function(){try{var b=document.getElementById('quality'),m=/[?&]q=([a-z_-]+)/i.exec(location.search),v=m?m[1].toLowerCase().replace(/_/g,'-'):null;if(v==='ultralow'||v==='ultra'||v==='ul')v='ultra-low';if(v!=='ultra-low'&&v!=='low'&&v!=='high')v=null;if(!v){var l=localStorage.getItem('ss.quality');if(l==='ultra-low'||l==='low'||l==='high')v=l;}if(v)b.textContent='Quality: '+(v==='ultra-low'?'Ultra-low':v==='low'?'Low':'High');}catch(e){}})();</script>
+    <p id="best">Best: 0</p>
+    <p id="loading">Loading street…</p>
+  </div>
+  <div id="over">
+    <h2>Killed in action</h2>
+    <p id="over-new">NEW BEST</p>
+    <div id="over-stats"></div>
+    <table id="over-table"></table>
+    <button id="restart" type="button">Restart</button>
+  </div>
+  <div id="hud"></div>
+  <script type="module" src="game.NVURVN7W.js"></script>
+<script>(function(){if(!('serviceWorker'in navigator)||/[?&]nosw/.test(location.search))return;var V='ssp-b8e705d7e4',key='ssp-sw-reloaded-'+V,once=false;try{once=sessionStorage.getItem(key)==='1'}catch(e){}function go(){if(once)return;once=true;try{sessionStorage.setItem(key,'1')}catch(e){}location.reload()}navigator.serviceWorker.addEventListener('controllerchange',go);navigator.serviceWorker.addEventListener('message',function(e){if(e&&e.data&&e.data.type==='ss-sw-activate'&&e.data.v===V)go()});navigator.serviceWorker.register('./sw.js?v='+V,{scope:'./'}).then(function(reg){try{reg.update()}catch(e){}if(reg.waiting)try{reg.waiting.postMessage('ss-skip')}catch(e){}}).catch(function(){})})();</script></body>
+</html>
