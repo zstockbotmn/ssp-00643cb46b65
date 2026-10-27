@@ -374,8 +374,10 @@ canvas {
 #hit-marker span { width: 14px; height: 3px; background: #fff; box-shadow: 0 0 3px #000; }
 /* stronger damage feedback */
 #dmg-vignette { background: radial-gradient(circle at center, rgba(160, 0, 0, 0.12) 30%, rgba(200, 0, 0, 0.88) 100%); }
+/* A44 App PM 06:52: rifle hits = red at the screen edges only, clear centre */
+#dmg-vignette.edge { background: radial-gradient(ellipse at center, rgba(200, 0, 0, 0) 58%, rgba(200, 0, 0, 0.35) 78%, rgba(210, 0, 0, 0.85) 100%); }
 #dmg-dir { width: 240px; height: 240px; margin: -120px 0 0 -120px; }
-#dmg-dir .arrow { margin-left: -16px; border-left-width: 16px; border-right-width: 16px; border-bottom: 30px solid #ff2020; filter: drop-shadow(0 0 4px #000); }
+#dmg-dir .arrow { margin-left: -16px; border-left-width: 16px; border-right-width: 16px; border-bottom: 30px solid #ff2020; }
 /* wave intro */
 #wave-banner { position: absolute; left: 0; right: 0; top: 28%; text-align: center; font: 800 44px/1 system-ui, sans-serif; letter-spacing: 8px; color: #ff4a3a; text-shadow: 0 2px 8px #000; opacity: 0; pointer-events: none; }
 #wave-banner.show { animation: wave 1.3s ease-out; }
@@ -400,8 +402,9 @@ canvas {
 }
 
 #enemies-left.next { background: rgba(30, 60, 30, 0.75); }
-#scope-overlay { position: fixed; inset: 0; pointer-events: none; display: none; z-index: -1; }
-#scope-overlay.on { display: block; }
+#scope-overlay { position: fixed; inset: 0; pointer-events: none; visibility: hidden; z-index: -1; will-change: opacity; } /* A44: visibility (layer kept), not display */
+#scope-overlay.on { visibility: visible; }
+body.dom-prewarm #scope-overlay, body.dom-prewarm #edge-warn, body.dom-prewarm #dmg-dir { visibility: visible; opacity: 0.001; } /* A44: first raster at run start (hud.prewarmDom) */
 #scope-overlay .lens { position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent 0, transparent 34vmin, rgba(0,0,0,0.55) 35vmin, rgba(0,0,0,0.92) 37vmin); }
 #scope-overlay .rh, #scope-overlay .rv { position: absolute; background: rgba(10,10,10,0.85); }
 #scope-overlay .rh { left: calc(50% - 34vmin); width: 68vmin; top: 50%; height: 1.5px; transform: translateY(-50%); }
@@ -410,7 +413,7 @@ canvas {
 /* Clearer damage direction: big red wedge on a ring around the crosshair */
 #dmg-dir { width: 56vmin; height: 56vmin; margin: -28vmin 0 0 -28vmin; transition: opacity 0.6s linear; z-index: 4; }
 #dmg-dir .arrow { left: 50%; top: 0; width: 0; height: 0; margin-left: -5vmin; border-left: 5vmin solid transparent; border-right: 5vmin solid transparent;
-  border-bottom: 6vmin solid rgba(230, 30, 20, 0.9); filter: drop-shadow(0 0 6px rgba(255,0,0,0.8)); transform: none; background: none; }
+  border-bottom: 6vmin solid rgba(230, 30, 20, 0.9); transform: none; background: none; }
 /* Low health: persistent pulsing red edges */
 #lowhp { position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.4s; box-shadow: inset 0 0 10vmin 1vmin rgba(170, 0, 0, 0.6); }
 #lowhp.on { opacity: 1; animation: lowhp 1.1s ease-in-out infinite; }
@@ -453,8 +456,7 @@ body.ready #loading { display: none; }
 /* m1t: damage direction = red arc toward the shooter (+ arrow); hit markers bigger for low fps */
 #dmg-dir { width: 300px; height: 300px; margin: -150px 0 0 -150px; transition: opacity 0.3s linear; }
 #dmg-dir.show { opacity: 1; transition: none; }
-#dmg-dir .arc { position: absolute; inset: 0; border-radius: 50%; border: 10px solid transparent; border-top-color: rgba(255, 30, 30, 0.9);
-  filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.8)); }
+#dmg-dir .arc { position: absolute; inset: 0; border-radius: 50%; border: 10px solid transparent; border-top-color: rgba(255, 30, 30, 0.9); }
 #dmg-dir .arrow { top: -14px; }
 #hit-marker span { width: 26px !important; height: 5px !important; background: #fff; box-shadow: 0 0 5px #000, 0 0 2px #f33; }
 #hit-marker span:nth-child(1) { left: 7px; top: 9px; }
@@ -478,12 +480,18 @@ body.starting #starting { display: flex; }
 #dmg-dir .arc, #dmg-dir .arrow { display: none !important; }
 #dmg-dir svg, #edge-warn svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; } /* m1y: the full-screen arc SVGs swallowed canvas taps/clicks */
 #dmg-dir svg *, #edge-warn svg * { pointer-events: none; }
-#dmg-dir path { fill: none; stroke: rgba(255, 30, 30, 0.95); stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(255, 0, 0, 0.9)); }
-#edge-warn { position: fixed; inset: 0; pointer-events: none; opacity: 0; z-index: 4; transition: opacity 0.35s linear; }
+#dmg-dir path { fill: none; stroke: rgba(255, 30, 30, 0.95); stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
+#dmg-dir path.dir-glow { stroke: rgba(255, 0, 0, 0.35); stroke-width: 30; } /* A44: glow stroke replaces the drop-shadow filter (software filter on iOS) */
+#edge-warn { position: fixed; inset: 0; pointer-events: none; opacity: 0; z-index: 4; transition: opacity 0.35s linear; will-change: opacity; }
 #edge-warn.show { opacity: 1; transition: none; }
 #edge-warn path { fill: none; stroke-linecap: round; }
 #edge-warn path.edge-out { stroke: rgba(20, 6, 0, 0.85); stroke-width: 22; }
-#edge-warn path.edge-core { stroke: #ff4d12; stroke-width: 13; filter: drop-shadow(0 0 6px rgba(255, 90, 20, 0.9)); } /* A20: thicker, red-orange core on a dark outline - reads on a bright sky */
+#edge-warn path.edge-glow { stroke: rgba(255, 90, 20, 0.4); stroke-width: 34; } /* A44: glow stroke replaces the SVG drop-shadow filter (software filter on iOS) */
+#edge-warn path.edge-core { stroke: #ff4d12; stroke-width: 13; } /* A20: thicker, red-orange core on a dark outline - reads on a bright sky */
+/* A44 PM 04:27: a rifle shot from outside the view (hud.edgeWarn(angle, true)) - a subtle arc to match the marker chevron: thinner, paler, shorter */
+#edge-warn.subtle path.edge-out { stroke: rgba(20, 6, 0, 0.4); stroke-width: 8; }
+#edge-warn.subtle path.edge-glow { stroke: rgba(240, 150, 100, 0.12); stroke-width: 12; }
+#edge-warn.subtle path.edge-core { stroke: rgba(235, 155, 115, 0.7); stroke-width: 4.5; }
 
 /* first-run hint (m1z+): HUD-styled, never takes input */
 #first-hint { position: fixed; left: 50%; bottom: calc(26% + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 6; pointer-events: none;
@@ -493,7 +501,13 @@ body.starting #starting { display: flex; }
 #first-hint b { color: #ffd23a; font-weight: 800; }
 #first-hint.show { opacity: 1; transition: none; }
 /* A8: wedge toward the shooter around the crosshair, FLANKED tell, ducked / exposed indicator */
-#dmg-dir path.wedge { fill: rgba(255, 34, 24, 0.78); stroke: rgba(40, 0, 0, 0.85); stroke-width: 2; filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.8)); }
+#dmg-dir path.wedge { fill: rgba(255, 34, 24, 0.78); stroke: rgba(40, 0, 0, 0.85); stroke-width: 2; }
+#dmg-dir path.wedge-glow { fill: none; stroke: rgba(255, 0, 0, 0.3); stroke-width: 10; }
+/* A44 Tester 06:00: rifle hits (hud.damageDirection subtle) - small pale wedge, no dark outline / glow, thin short edge arc */
+#dmg-dir.subtle path.wedge { fill: rgba(255, 120, 100, 0.42); stroke: none; }
+#dmg-dir.subtle path.wedge-glow { stroke: none; }
+#dmg-dir.subtle path { stroke: rgba(255, 110, 95, 0.45); stroke-width: 8; }
+#dmg-dir.subtle path.dir-glow { stroke: none; }
 #flanked { position: fixed; left: 50%; top: 24%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 8px; padding: 3px 12px; font: 900 22px system-ui, sans-serif; letter-spacing: 2px; color: #ffcf4a; background: rgba(60, 20, 0, 0.6); border: 2px solid rgba(255, 190, 60, 0.9); border-radius: 6px; text-shadow: 0 2px 3px #000; opacity: 0; pointer-events: none; z-index: 5; transition: opacity 0.4s linear; white-space: nowrap; }
 #flanked .fa { display: inline-block; font-size: 22px; color: #ffb020; }
 #flanked.show { opacity: 1; transition: none; }
